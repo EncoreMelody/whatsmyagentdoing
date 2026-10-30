@@ -2,6 +2,8 @@
 
 # whatsmyagentdoing
 
+**English** | [繁體中文](README.zh-TW.md)
+
 **A Claude Code / Codex skill: type `/myoffice` and see what every Claude Code, Codex, Gemini CLI, Copilot CLI, OMP (oh-my-pi), Kimi Code, DeepSeek Harness and Grok Build agent on your machine is doing — live, in a little office.**
 
 **Website:** https://charonyuu.github.io/whatsmyagentdoing/
