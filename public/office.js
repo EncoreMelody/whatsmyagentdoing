@@ -521,7 +521,8 @@
           if (p.desk !== desk || p.mode !== 'work') { p.desk = desk; this.goTo(p, desk.seat); }
           p.mode = 'work';
         } else {
-          if (p.mode !== 'wander') { p.mode = 'wander'; p.desk = null; p.poi = null; p.until = 0; }
+          // Straight from the desk after a finished turn: coffee first.
+          if (p.mode !== 'wander') { p.coffee = p.mode === 'work'; p.mode = 'wander'; p.desk = null; p.poi = null; p.until = 0; }
           // Someone started working at the desk this one was napping on.
           if (p.napDesk && takenDesks.has(p.napDesk)) { this.release(p); p.path = []; }
         }
@@ -587,9 +588,13 @@
         weighted.push([{ x: d.seat.x, y: d.seat.y, act: 'nap', face: d.side === 'n' ? 'front' : 'back', sit: 0.34, desk: d }, sleepy ? 3 : 0.25]);
       }
       if (!weighted.length) return;
-      let r = Math.random() * weighted.reduce((a, [, w]) => a + w, 0);
-      let choice = weighted[0][0];
-      for (const [q, w] of weighted) { r -= w; if (r <= 0) { choice = q; break; } }
+      const brew = p.coffee && weighted.find(([q]) => q.act === 'coffee');
+      p.coffee = false;
+      let choice = brew ? brew[0] : weighted[0][0];
+      if (!brew) {
+        let r = Math.random() * weighted.reduce((a, [, w]) => a + w, 0);
+        for (const [q, w] of weighted) { r -= w; if (r <= 0) { choice = q; break; } }
+      }
       if (choice.desk) { choice.desk.napper = p.key; p.napDesk = choice.desk; }
       choice.taken = p.key;
       p.poi = choice;
